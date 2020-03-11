@@ -5,8 +5,8 @@
 semantic segmentation を行うスクリプトを作成する。
 
 ## データ準備
-データは Cityscapes Dataset を使用する。
-URL: https://www.cityscapes-dataset.com/
+データは Cityscapes Dataset を使用する。<br>
+URL: https://www.cityscapes-dataset.com/ <br>
 事前に会員登録を済ませ、以下の手順でデータのダウンロードを行う。
 
 ダウンロードコマンドは以下の通り。
