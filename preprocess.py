@@ -45,18 +45,18 @@ if __name__ == '__main__':
     for t in ['train', 'val']:
         # preprocess: img => downsize
         img_path_list = sorted(glob(f'{DATA_DIR}/leftImg8bit/{t}/*/*'))
-        dst_path_list = [f'{DATA_DIR}/img/X{i:05}.png' for i in range(len(img_path_list))]
+        dst_path_list = [f'{DATA_DIR}/img/{t}/X{i:05}.png' for i in range(len(img_path_list))]
 
-        os.makedirs(f'{DATA_DIR}/img', exist_ok=True)
+        os.makedirs(f'{DATA_DIR}/img/{t}', exist_ok=True)
         with Pool(processes=PROCESS_NUM) as p:
             m = p.imap(preprocess_img, zip(img_path_list, dst_path_list))
             list(tqdm(m, desc=f'preprocess {t} img files', total=len(img_path_list)))
 
         # preprocess: anno => rgb2lbl, downsize
         anno_path_list = sorted(glob(f'{DATA_DIR}/gtFine/{t}/*/*_color.png'))
-        dst_path_list = [f'{DATA_DIR}/anno/Y{i:05}.png' for i in range(len(anno_path_list))]
+        dst_path_list = [f'{DATA_DIR}/anno/{t}/Y{i:05}.png' for i in range(len(anno_path_list))]
 
-        os.makedirs(f'{DATA_DIR}/anno', exist_ok=True)
+        os.makedirs(f'{DATA_DIR}/anno/{t}', exist_ok=True)
         with Pool(processes=PROCESS_NUM) as p:
             m = p.imap(preprocess_anno, zip(anno_path_list, dst_path_list))
             list(tqdm(m, desc=f'preprocess {t} anno files', total=len(anno_path_list)))
