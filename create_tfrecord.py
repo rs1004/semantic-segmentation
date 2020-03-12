@@ -50,7 +50,7 @@ if __name__ == '__main__':
     for t in ['train', 'val']:
         img_list, anno_list = get_path_list(data_type=t)
 
-        assert len(img_list) != len(anno_list), f'list length is mismatch: img => {len(img_list)}, anno => {len(anno_list)}'
+        assert len(img_list) == len(anno_list), f'list length is mismatch: img => {len(img_list)}, anno => {len(anno_list)}'
 
         # create tfrecord
         os.makedirs(f'{TFRECORD_DIR}/{t}', exist_ok=True)
