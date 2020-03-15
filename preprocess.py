@@ -20,13 +20,13 @@ def set_label_map():
     LABEL_MAP = {f'{r}_{g}_{b}': i for i, k in enumerate(label_map.keys()) for r, g, b in label_map[k]}
 
 
-def preprocess_img(src_dst_path):
+def preprocess_image(src_dst_path):
     src_path, dst_path = src_dst_path
     img = Image.open(src_path).convert('RGB').resize((W, H))
     img.save(dst_path)
 
 
-def preprocess_anno(src_dst_path):
+def preprocess_label(src_dst_path):
     src_path, dst_path = src_dst_path
     img = np.asarray(Image.open(src_path).convert('RGB').resize((W, H), resample=Image.NEAREST))
     img = Image.fromarray(
@@ -43,20 +43,20 @@ if __name__ == '__main__':
     set_label_map()
 
     for t in ['train', 'val']:
-        # preprocess: img => downsize
-        img_path_list = sorted(glob(f'{DATA_DIR}/leftImg8bit/{t}/*/*'))
-        dst_path_list = [f'{DATA_DIR}/img/{t}/X{i:05}.png' for i in range(len(img_path_list))]
+        # preprocess: image => downsize
+        src_path_list = sorted(glob(f'{DATA_DIR}/leftImg8bit/{t}/*/*'))
+        dst_path_list = [f'{DATA_DIR}/image/{t}/X{i:05}.png' for i in range(len(src_path_list))]
 
-        os.makedirs(f'{DATA_DIR}/img/{t}', exist_ok=True)
+        os.makedirs(f'{DATA_DIR}/image/{t}', exist_ok=True)
         with Pool(processes=PROCESS_NUM) as p:
-            m = p.imap(preprocess_img, zip(img_path_list, dst_path_list))
-            list(tqdm(m, desc=f'preprocess {t} img files', total=len(img_path_list)))
+            m = p.imap(preprocess_image, zip(src_path_list, dst_path_list))
+            list(tqdm(m, desc=f'preprocess {t} image files', total=len(src_path_list)))
 
-        # preprocess: anno => rgb2lbl, downsize
-        anno_path_list = sorted(glob(f'{DATA_DIR}/gtFine/{t}/*/*_color.png'))
-        dst_path_list = [f'{DATA_DIR}/anno/{t}/Y{i:05}.png' for i in range(len(anno_path_list))]
+        # preprocess: label => rgb2lbl, downsize
+        src_path_list = sorted(glob(f'{DATA_DIR}/gtFine/{t}/*/*_color.png'))
+        dst_path_list = [f'{DATA_DIR}/label/{t}/Y{i:05}.png' for i in range(len(src_path_list))]
 
-        os.makedirs(f'{DATA_DIR}/anno/{t}', exist_ok=True)
+        os.makedirs(f'{DATA_DIR}/label/{t}', exist_ok=True)
         with Pool(processes=PROCESS_NUM) as p:
-            m = p.imap(preprocess_anno, zip(anno_path_list, dst_path_list))
-            list(tqdm(m, desc=f'preprocess {t} anno files', total=len(anno_path_list)))
+            m = p.imap(preprocess_label, zip(src_path_list, dst_path_list))
+            list(tqdm(m, desc=f'preprocess {t} label files', total=len(src_path_list)))
