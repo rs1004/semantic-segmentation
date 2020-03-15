@@ -26,16 +26,16 @@ class DataGenerator:
     def parse(self, example_proto):
         features = {
             'id': tf.io.FixedLenFeature([], tf.int64),
-            'img_data': tf.io.FixedLenFeature([], tf.string),
-            'anno_data': tf.io.FixedLenFeature([], tf.string)
+            'image_data': tf.io.FixedLenFeature([], tf.string),
+            'label_data': tf.io.FixedLenFeature([], tf.string)
         }
 
         parsed_features = tf.io.parse_single_example(example_proto, features)
 
-        image = tf.image.decode_png(parsed_features['img_data'], channels=3)
+        image = tf.image.decode_png(parsed_features['image_data'], channels=3)
         image = tf.reshape(tf.cast(image, tf.float32), (H, W, 3))
         image /= 255.0
-        label = tf.image.decode_png(parsed_features['anno_data'], channels=1)
+        label = tf.image.decode_png(parsed_features['label_data'], channels=1)
         label = tf.reshape(label, (H, W, 1))
 
         sample = {
