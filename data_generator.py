@@ -23,7 +23,7 @@ class DataGenerator:
         self.data_length = d['data_length']
 
     def get_one_shot_iterator(self):
-        files = tf.io.gfile.glob(f'{self.tfrecord_dir}/{self.data_type}/*')
+        files = tf.io.gfile.glob(f'{self.tfrecord_dir}/{self.data_type}/*.tfrecord')
         dataset_iterator = (
             tf.data.TFRecordDataset(files, num_parallel_reads=PARALLEL_NUM)
             .map(self.parse, num_parallel_calls=PARALLEL_NUM)
