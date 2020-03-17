@@ -3,7 +3,7 @@ import math
 from data_generator import DataGenerator
 
 model = tf.keras.models.Sequential([
-    tf.keras.layers.Conv2D(filters=64, kernel_size=3, padding='same', activation='relu', input_shape=(400, 800, 3)),
+    tf.keras.layers.Conv2D(filters=64, kernel_size=3, padding='same', activation='relu', input_shape=(128, 256, 3)),
     tf.keras.layers.Conv2D(filters=64, kernel_size=3, padding='same', activation='relu'),
     # tf.keras.layers.MaxPooling2D(strides=2),
     tf.keras.layers.Conv2D(filters=8, kernel_size=1, activation='softmax')
