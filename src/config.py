@@ -7,11 +7,13 @@ class Config:
         # image spec
         self.H = 256
         self.W = 512
+        self.CLASS_NUM = 8
 
         # process spec
         self.PARALLEL_NUM = cpu_count()
         self.TFRECORD_FILE_NUM = 2
-        self.BATCH_SIZE = 32
+        self.BATCH_SIZE = 2
+        self.EPOCHS = 2
 
         # path
         self.ROOT_DIR = Path(__file__).parent.parent
