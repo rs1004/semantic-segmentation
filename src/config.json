@@ -1,8 +1,0 @@
-{
-    "H": 400,
-    "W": 800,
-    "DATA_DIR": "/work/data",
-    "TFRECORD_DIR": "/work/data/tfrecord",
-    "LABELMAP_PATH": "/work/src/labelmap.json",
-    "BATCH_SIZE": 32
-}
