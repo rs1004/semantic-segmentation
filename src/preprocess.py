@@ -44,18 +44,18 @@ if __name__ == '__main__':
     for t in ['train', 'val']:
         # preprocess: image => downsize
         src_path_list = sorted((CONFIG.DATA_DIR / 'leftImg8bit' / t).glob('*/*'))
-        dst_path_list = (CONFIG.DATA_DIR / 'image' / t / f'{i:05}.png' for i in range(len(src_path_list)))
+        dst_path_list = (CONFIG.IMAGE_DIR / t / f'{i:05}.png' for i in range(len(src_path_list)))
 
-        Path(CONFIG.DATA_DIR / 'image' / t).mkdir(parents=True, exist_ok=True)
+        Path(CONFIG.IMAGE_DIR / t).mkdir(parents=True, exist_ok=True)
         with Pool(processes=PARALLEL_NUM) as p:
             m = p.imap(preprocess_image, zip(src_path_list, dst_path_list))
             list(tqdm(m, desc=f'preprocess {t} image files', total=len(src_path_list)))
 
         # preprocess: label => rgb2lbl, downsize
         src_path_list = sorted((CONFIG.DATA_DIR / 'gtFine' / t).glob('*/*_color.png'))
-        dst_path_list = (CONFIG.DATA_DIR / 'label' / t / f'{i:05}.png' for i in range(len(src_path_list)))
+        dst_path_list = (CONFIG.LABEL_DIR / t / f'{i:05}.png' for i in range(len(src_path_list)))
 
-        Path(CONFIG.DATA_DIR / 'label' / t).mkdir(parents=True, exist_ok=True)
+        Path(CONFIG.LABEL_DIR / t).mkdir(parents=True, exist_ok=True)
         with Pool(processes=PARALLEL_NUM) as p:
             m = p.imap(preprocess_label, zip(src_path_list, dst_path_list))
             list(tqdm(m, desc=f'preprocess {t} label files', total=len(src_path_list)))

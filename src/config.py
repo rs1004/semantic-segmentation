@@ -7,5 +7,7 @@ class Config:
         self.W = 512
         self.ROOT_DIR = Path(__file__).parent.parent
         self.DATA_DIR = self.ROOT_DIR / 'data'
-        self.TFRECORD_DIR = self.ROOT_DIR / 'data' / 'tfrecord'
+        self.IMAGE_DIR = self.DATA_DIR / 'image'
+        self.LABEL_DIR = self.DATA_DIR / 'label'
+        self.TFRECORD_DIR = self.DATA_DIR / 'tfrecord'
         self.BATCH_SIZE = 32
