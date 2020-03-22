@@ -1,13 +1,12 @@
 from pathlib import Path
 from PIL import Image
-from multiprocessing import Pool, cpu_count
+from multiprocessing import Pool
 from tqdm import tqdm
 from config import Config
 import json
 import numpy as np
 
 CONFIG = Config()
-PARALLEL_NUM = cpu_count()
 
 
 def set_label_map():
@@ -46,8 +45,8 @@ if __name__ == '__main__':
         src_path_list = sorted((CONFIG.DATA_DIR / 'leftImg8bit' / t).glob('*/*'))
         dst_path_list = (CONFIG.IMAGE_DIR / t / f'{i:05}.png' for i in range(len(src_path_list)))
 
-        Path(CONFIG.IMAGE_DIR / t).mkdir(parents=True, exist_ok=True)
-        with Pool(processes=PARALLEL_NUM) as p:
+        (CONFIG.IMAGE_DIR / t).mkdir(parents=True, exist_ok=True)
+        with Pool() as p:
             m = p.imap(preprocess_image, zip(src_path_list, dst_path_list))
             list(tqdm(m, desc=f'preprocess {t} image files', total=len(src_path_list)))
 
@@ -55,7 +54,7 @@ if __name__ == '__main__':
         src_path_list = sorted((CONFIG.DATA_DIR / 'gtFine' / t).glob('*/*_color.png'))
         dst_path_list = (CONFIG.LABEL_DIR / t / f'{i:05}.png' for i in range(len(src_path_list)))
 
-        Path(CONFIG.LABEL_DIR / t).mkdir(parents=True, exist_ok=True)
-        with Pool(processes=PARALLEL_NUM) as p:
+        (CONFIG.LABEL_DIR / t).mkdir(parents=True, exist_ok=True)
+        with Pool() as p:
             m = p.imap(preprocess_label, zip(src_path_list, dst_path_list))
             list(tqdm(m, desc=f'preprocess {t} label files', total=len(src_path_list)))
