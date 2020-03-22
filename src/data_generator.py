@@ -1,21 +1,19 @@
-from set_config import set_config
+from config import Config
 import tensorflow as tf
-import os
 import json
 
-PARALLEL_NUM = os.cpu_count()
+CONFIG = Config()
 
 
 class DataGenerator:
     def __init__(self, data_type):
-        set_config()
         self.data_type = data_type
-        self.tfrecord_dir = os.environ['TFRECORD_DIR']
-        self.batch_size = int(os.environ['BATCH_SIZE'])
+        self.tfrecord_dir = CONFIG.TFRECORD_DIR
+        self.batch_size = CONFIG.BATCH_SIZE
         self.set_data_spec()
 
     def set_data_spec(self):
-        with open(f'{self.tfrecord_dir}/{self.data_type}/spec.json', 'r') as f:
+        with open(self.tfrecord_dir / self.data_type / 'spec.json', 'r') as f:
             d = json.load(f)
 
         self.H = d['height']
@@ -25,9 +23,9 @@ class DataGenerator:
     def get_one_shot_iterator(self):
         files = tf.io.gfile.glob(f'{self.tfrecord_dir}/{self.data_type}/*.tfrecord')
         dataset_iterator = (
-            tf.data.TFRecordDataset(files, num_parallel_reads=PARALLEL_NUM)
-            .map(self.parse, num_parallel_calls=PARALLEL_NUM)
-            .map(self.augumentation, num_parallel_calls=PARALLEL_NUM)
+            tf.data.TFRecordDataset(files, num_parallel_reads=CONFIG.PARALLEL_NUM)
+            .map(self.parse, num_parallel_calls=CONFIG.PARALLEL_NUM)
+            .map(self.augumentation, num_parallel_calls=CONFIG.PARALLEL_NUM)
             .apply(tf.data.experimental.shuffle_and_repeat(buffer_size=100))
             .batch(self.batch_size).prefetch(self.batch_size)
         )

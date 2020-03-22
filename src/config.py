@@ -1,4 +1,5 @@
 from pathlib import Path
+from multiprocessing import cpu_count
 
 
 class Config:
@@ -8,6 +9,7 @@ class Config:
         self.W = 512
 
         # process spec
+        self.PARALLEL_NUM = cpu_count()
         self.TFRECORD_FILE_NUM = 2
         self.BATCH_SIZE = 32
 
