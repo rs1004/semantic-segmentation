@@ -1,4 +1,9 @@
 import tensorflow as tf
+import re
+from pathlib import Path
+from config import Config
+
+CONFIG = Config()
 
 
 class SampleNet:
@@ -11,8 +16,21 @@ class SampleNet:
         return self.model.predict(x)
 
     def optimize(self, ds, epochs, steps, resume=True):
-        # TODO： check pointを参照する処理
-        self.model.fit(ds, epochs=epochs, steps_per_epoch=steps)
+        ckpt_path = CONFIG.RESULT_DIR / 'model-{epoch:04d}.ckpt'
+        ckpt_callback = tf.keras.callbacks.ModelCheckpoint(
+            ckpt_path.as_posix(),
+            save_weights_only=True,
+            verbose=1,
+            period=CONFIG.SAVE_PERIODS
+        )
+        if resume and ckpt_path.parent.exists():
+            latest = tf.train.latest_checkpoint(CONFIG.RESULT_DIR)
+            self.model.load_weights(latest)
+            initial_epoch = int(re.findall(r'\d{4}', latest)[0])
+        else:
+            initial_epoch = 0
+
+        self.model.fit(ds, initial_epoch=initial_epoch, epochs=initial_epoch + epochs, steps_per_epoch=steps, callbacks=[ckpt_callback])
 
     def create_model(self):
         model = tf.keras.models.Sequential([

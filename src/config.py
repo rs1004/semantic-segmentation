@@ -12,8 +12,9 @@ class Config:
         # process spec
         self.PARALLEL_NUM = cpu_count()
         self.TFRECORD_FILE_NUM = 2
-        self.BATCH_SIZE = 2
+        self.BATCH_SIZE = 8
         self.EPOCHS = 2
+        self.SAVE_PERIODS = 5
 
         # path
         self.ROOT_DIR = Path(__file__).parent.parent
@@ -21,3 +22,4 @@ class Config:
         self.IMAGE_DIR = self.DATA_DIR / 'image'
         self.LABEL_DIR = self.DATA_DIR / 'label'
         self.TFRECORD_DIR = self.DATA_DIR / 'tfrecord'
+        self.RESULT_DIR = self.ROOT_DIR / 'result'
