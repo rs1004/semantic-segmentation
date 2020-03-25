@@ -34,6 +34,13 @@ class UNet:
 
         self.model.fit(ds, initial_epoch=initial_epoch, epochs=initial_epoch + epochs, steps_per_epoch=steps, callbacks=[ckpt_callback])
 
+    def evaluate(self, ds, steps):
+        assert CONFIG.RESULT_DIR.exists(), 'ckpt not found'
+        latest = tf.train.latest_checkpoint(CONFIG.RESULT_DIR)
+        self.model.load_weights(latest)
+        loss, acc = self.model.evaluate(ds, verbose=2, steps=steps)
+        print(loss, acc)
+
     def create_model(self):
         inputs = Input(shape=(self.input_shape))
 
