@@ -9,37 +9,44 @@ CONFIG = Config()
 
 
 class UNet:
-    def __init__(self, input_shape, class_num):
+    def __init__(self, input_shape, class_num, resume=True):
         self.input_shape = input_shape
         self.class_num = class_num
-        self.model = self.create_model()
+        self.ckpt_path = CONFIG.RESULT_DIR / 'model-{epoch:04d}.ckpt'
+
+        self.initialize_model(resume=resume)
 
     def __call__(self, x):
-        return self.model.predict(x)
+        return self.model.predict(x, steps=1)
 
-    def optimize(self, ds, epochs, steps, resume=True):
-        ckpt_path = CONFIG.RESULT_DIR / 'model-{epoch:04d}.ckpt'
+    def optimize(self, ds, epochs, steps):
         ckpt_callback = tf.keras.callbacks.ModelCheckpoint(
-            ckpt_path.as_posix(),
+            self.ckpt_path.as_posix(),
             save_weights_only=True,
             verbose=1,
             period=CONFIG.SAVE_PERIODS
         )
-        if resume and ckpt_path.parent.exists():
-            latest = tf.train.latest_checkpoint(CONFIG.RESULT_DIR)
-            self.model.load_weights(latest)
-            initial_epoch = int(re.findall(r'\d{4}', latest)[0])
-        else:
-            initial_epoch = 0
 
-        self.model.fit(ds, initial_epoch=initial_epoch, epochs=initial_epoch + epochs, steps_per_epoch=steps, callbacks=[ckpt_callback])
+        self.model.fit(
+            ds,
+            initial_epoch=self.model_latest_epoch,
+            epochs=self.model_latest_epoch + epochs,
+            steps_per_epoch=steps,
+            callbacks=[ckpt_callback]
+        )
 
     def evaluate(self, ds, steps):
-        assert CONFIG.RESULT_DIR.exists(), 'ckpt not found'
-        latest = tf.train.latest_checkpoint(CONFIG.RESULT_DIR)
-        self.model.load_weights(latest)
         loss, acc = self.model.evaluate(ds, verbose=2, steps=steps)
         print(loss, acc)
+
+    def initialize_model(self, resume):
+        self.create_model()
+        if resume and self.ckpt_path.parent.exists():
+            latest = tf.train.latest_checkpoint(CONFIG.RESULT_DIR)
+            self.model.load_weights(latest)
+            self.model_latest_epoch = int(re.findall(r'\d{4}', latest)[0])
+        else:
+            self.model_latest_epoch = 0
 
     def create_model(self):
         inputs = Input(shape=(self.input_shape))
@@ -88,4 +95,4 @@ class UNet:
             metrics=['sparse_categorical_accuracy']
         )
 
-        return model
+        self.model = model
