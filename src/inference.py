@@ -54,8 +54,8 @@ if __name__ == '__main__':
         pred = tf.math.argmax(model(image), axis=-1, output_type=tf.int64)
         for i in range(CONFIG.BATCH_SIZE):
             img = (image[i].numpy() * 255.0).astype(np.uint8)
-            prd = np.array([label_map[id] for id in pred[i].numpy().reshape(-1)], dtype=np.uint8).reshape(H, W, 3)
-            lbl = np.array([label_map[id] for id in label[i].numpy().reshape(-1)], dtype=np.uint8).reshape(H, W, 3)
+            prd = np.asarray([label_map[id] for id in pred[i].numpy().reshape(-1)], dtype=np.uint8).reshape(H, W, 3)
+            lbl = np.asarray([label_map[id] for id in label[i].numpy().reshape(-1)], dtype=np.uint8).reshape(H, W, 3)
             get_concat_h(
                 image=Image.fromarray(img),
                 pred=Image.fromarray(prd),
