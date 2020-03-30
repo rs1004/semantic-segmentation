@@ -13,7 +13,7 @@ def set_label_map():
     with open(CONFIG.ROOT_DIR / 'labelmap.json', 'r') as f:
         label_map = json.load(f)
     global LABEL_MAP
-    LABEL_MAP = {f'{r}_{g}_{b}': i for i, k in enumerate(label_map.keys()) for r, g, b in label_map[k]}
+    LABEL_MAP = {f'{r}_{g}_{b}': k['id'] for k in label_map.values() for r, g, b in k['colors']}
 
 
 def preprocess_image(src_dst_path):
