@@ -6,8 +6,9 @@ CONFIG = Config()
 
 
 class DataGenerator:
-    def __init__(self, data_type):
+    def __init__(self, data_type, is_train=True):
         self.data_type = data_type
+        self.is_train = is_train
         self.tfrecord_dir = CONFIG.TFRECORD_DIR
         self.batch_size = CONFIG.BATCH_SIZE
         self.set_data_spec()
@@ -22,14 +23,20 @@ class DataGenerator:
 
     def get_one_shot_iterator(self):
         files = tf.io.gfile.glob(f'{self.tfrecord_dir}/{self.data_type}/*.tfrecord')
-        dataset_iterator = (
-            tf.data.TFRecordDataset(files, num_parallel_reads=CONFIG.PARALLEL_NUM)
-            .map(self.parse, num_parallel_calls=CONFIG.PARALLEL_NUM)
-            .map(self.augumentation, num_parallel_calls=CONFIG.PARALLEL_NUM)
-            .apply(tf.data.experimental.shuffle_and_repeat(buffer_size=self.data_length))
-            .batch(self.batch_size).prefetch(tf.data.experimental.AUTOTUNE)
-        )
-
+        if self.is_train:
+            dataset_iterator = (
+                tf.data.TFRecordDataset(files, num_parallel_reads=CONFIG.PARALLEL_NUM)
+                .map(self.parse, num_parallel_calls=CONFIG.PARALLEL_NUM)
+                .map(self.augumentation, num_parallel_calls=CONFIG.PARALLEL_NUM)
+                .apply(tf.data.experimental.shuffle_and_repeat(buffer_size=self.data_length))
+                .batch(self.batch_size).prefetch(tf.data.experimental.AUTOTUNE)
+            )
+        else:
+            dataset_iterator = (
+                tf.data.TFRecordDataset(files, num_parallel_reads=CONFIG.PARALLEL_NUM)
+                .map(self.parse, num_parallel_calls=CONFIG.PARALLEL_NUM)
+                .batch(self.batch_size).prefetch(tf.data.experimental.AUTOTUNE)
+            ) 
         return dataset_iterator
 
     def parse(self, example_proto):

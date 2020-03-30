@@ -42,7 +42,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # output => (original image, prediction, answer)
-    data_gen_val = DataGenerator('val')
+    data_gen_val = DataGenerator('val', is_train=False)
     ds_val = data_gen_val.get_one_shot_iterator()
     model = UNet(input_shape=(data_gen_val.H, data_gen_val.W, 3), class_num=CONFIG.CLASS_NUM)
     label_map = get_label_map()
