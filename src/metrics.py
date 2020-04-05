@@ -11,15 +11,16 @@ def get_metrics():
     metrics = []
     for i in range(CONFIG.CLASS_NUM):
         f = partial(sparse_class_average_iou, class_id=i)
-        f.__name__ = f'sparse_class_average_iou_class{i}'
+        f.__name__ = f'average_iou_class_{i}'
         metrics.append(f)
     metrics.append(sparse_mean_iou)
     metrics.append(sparse_categorical_accuracy)
+    
+    return metrics
 
 
 def _convert(y_true, y_pred):
-    B, H, W, _ = y_true.shape
-    y_true = K.one_hot(tf.reshape(y_true, (B, H, W)), CONFIG.CLASS_NUM)
+    y_true = K.one_hot(K.cast(K.max(y_true, axis=-1), 'int32'), CONFIG.CLASS_NUM)
     y_pred = K.one_hot(K.argmax(y_pred), y_pred.shape[-1])
     return y_true, y_pred
 
