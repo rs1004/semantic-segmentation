@@ -34,16 +34,6 @@ unzip -d {本リポジトリの絶対パス}/data leftImg8bit_trainvaltest.zip
 
 データの仕様については、Appendix. に記載する。(TBA)
 
-## 環境構築
-
-Docker 環境でスクリプトを動作させるため、イメージを build し、コンテナを立ち上げる。
-事前に [NGC](https://ngc.nvidia.com/) への会員登録・ログインが必要。
-
-```shell
-docker build -t ss:v1 docker/
-docker run --gpus all -it --rm --shm-size=4g --name ss -v {本リポジトリの絶対パス}:/work ss:v1
-```
-
 ## 処理フロー
 
 1. 前処理
@@ -57,15 +47,21 @@ docker run --gpus all -it --rm --shm-size=4g --name ss -v {本リポジトリの
 ### 1. 前処理
 
 `preprocess.py` で実施。
+EC2の `c5.xlarge` インスタンスで実行する想定。
 
 ```shell
+docker build -t cpu_env docker/cpu_env/
+docker run -it --rm --name cpu_env -v {本リポジトリの絶対パス}:/work cpu_env
 python preprocess.py
 ```
 
 ### 2. 画像データの TFRecord 化
 
 `create_tfrecord.py` で実施。
+EC2の `p2.xlarge` インスタンスで実行する想定。
 
 ```shell
+docker build -t gpu_env docker/gpu_env/
+docker run -it --rm --name gpu_env -v {本リポジトリの絶対パス}:/work gpu_env
 python create_tfrecord.py
 ```
