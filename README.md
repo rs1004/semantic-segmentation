@@ -51,7 +51,7 @@ unzip -d {本リポジトリの絶対パス}/data leftImg8bit_trainvaltest.zip
 EC2の `c5.xlarge` インスタンスで実行する想定。
 
 ```shell
-docker build -t cpu_env docker/cpu_env/
+docker build -t cpu_env --rm=true docker/cpu_env/
 docker run -it --rm --name cpu_env -v /work/semantic-segmentation/:/work cpu_env
 python src/preprocess.py
 ```
@@ -62,7 +62,7 @@ python src/preprocess.py
 EC2の `p2.xlarge` インスタンスで実行する想定。
 
 ```shell
-docker build -t gpu_env docker/gpu_env/
-docker run -it --rm --name gpu_env -v {本リポジトリの絶対パス}:/work gpu_env
-python create_tfrecord.py
+docker build -t gpu_env --rm=true docker/gpu_env/
+docker run --gpus all -it --rm --name gpu_env -v /work/semantic-segmentation/:/work gpu_env
+python src/create_tfrecord.py
 ```

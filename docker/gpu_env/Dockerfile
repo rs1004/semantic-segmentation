@@ -1,8 +1,8 @@
-FROM nvcr.io/nvidia/tensorflow:20.01-tf2-py3
+FROM tensorflow/tensorflow:latest-gpu-py3
 
-RUN apt-get update && pip install --upgrade pip \
-        pillow \
-        autopep8 \
-        pylint
+RUN apt update && apt -y upgrade && apt-get update && apt-get -y upgrade \
+    && pip install --upgrade pip \
+        Pillow==7.1.1 \
+        tqdm==4.45.0
 
 WORKDIR /work
