@@ -3,6 +3,7 @@
 ## 概要
 
 semantic segmentation を行うスクリプトを作成する。
+本スクリプトを実行する前に、setup.md を参考に実行環境の準備を行う必要がある。
 
 ## データ準備
 
@@ -51,8 +52,8 @@ EC2の `c5.xlarge` インスタンスで実行する想定。
 
 ```shell
 docker build -t cpu_env docker/cpu_env/
-docker run -it --rm --name cpu_env -v {本リポジトリの絶対パス}:/work cpu_env
-python preprocess.py
+docker run -it --rm --name cpu_env -v /work/semantic-segmentation/:/work cpu_env
+python src/preprocess.py
 ```
 
 ### 2. 画像データの TFRecord 化
