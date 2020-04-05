@@ -5,8 +5,8 @@ from multiprocessing import cpu_count
 class Config:
     def __init__(self):
         # image spec
-        self.H = 512
-        self.W = 1024
+        self.H = 256
+        self.W = 512
         self.CLASS_NUM = 8
 
         # process spec

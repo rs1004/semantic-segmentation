@@ -12,7 +12,6 @@ class UNet:
     def __init__(self, input_shape, class_num, resume=True):
         self.input_shape = input_shape
         self.class_num = class_num
-        self.ckpt_path = CONFIG.RESULT_DIR / 'model-{epoch:04d}.ckpt'
 
         self.initialize_model(resume=resume)
 
@@ -20,19 +19,12 @@ class UNet:
         return self.model.predict(x, steps=1)
 
     def optimize(self, ds, epochs, steps):
-        ckpt_callback = tf.keras.callbacks.ModelCheckpoint(
-            self.ckpt_path.as_posix(),
-            save_weights_only=True,
-            verbose=1,
-            period=CONFIG.SAVE_PERIODS
-        )
-
         self.model.fit(
             ds,
             initial_epoch=self.model_latest_epoch,
             epochs=self.model_latest_epoch + epochs,
             steps_per_epoch=steps,
-            callbacks=[ckpt_callback]
+            callbacks=self.callbacks
         )
 
     def evaluate(self, ds, steps):
@@ -41,12 +33,19 @@ class UNet:
 
     def initialize_model(self, resume):
         self.create_model()
-        if resume and self.ckpt_path.parent.exists():
+        if resume and CONFIG.RESULT_DIR.exists():
             latest = tf.train.latest_checkpoint(CONFIG.RESULT_DIR)
             self.model.load_weights(latest)
             self.model_latest_epoch = int(re.findall(r'\d{4}', latest)[0])
+            self.callbacks = [tf.keras.callbacks.ModelCheckpoint(
+                (CONFIG.RESULT_DIR / 'model-{epoch:04d}.ckpt').as_posix(),
+                save_weights_only=True,
+                verbose=1,
+                period=CONFIG.SAVE_PERIODS
+            )]
         else:
             self.model_latest_epoch = 0
+            self.callbacks = None
 
     def create_model(self):
         inputs = Input(shape=(self.input_shape))
