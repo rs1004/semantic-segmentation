@@ -4,6 +4,9 @@ from pathlib import Path
 from config import Config
 from tensorflow.keras.layers import Input, Conv2D, MaxPool2D, Conv2DTranspose, concatenate
 from tensorflow.keras.models import Model
+from tensorflow.keras.losses import sparse_categorical_crossentropy
+from metrics import get_metrics
+
 
 CONFIG = Config()
 
@@ -90,8 +93,8 @@ class UNet:
 
         model.compile(
             optimizer=tf.keras.optimizers.Adam(),
-            loss='sparse_categorical_crossentropy',
-            metrics=['sparse_categorical_accuracy']
+            loss=sparse_categorical_crossentropy,
+            metrics=get_metrics()
         )
 
         self.model = model
