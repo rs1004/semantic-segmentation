@@ -44,7 +44,7 @@ class UNet:
                 (CONFIG.RESULT_DIR / 'model-{epoch:04d}.ckpt').as_posix(),
                 save_weights_only=True,
                 verbose=1,
-                period=CONFIG.SAVE_PERIODS
+                save_freq=CONFIG.SAVE_PERIODS
             )]
         else:
             self.model_latest_epoch = 0

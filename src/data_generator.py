@@ -28,8 +28,7 @@ class DataGenerator:
                 tf.data.TFRecordDataset(files, num_parallel_reads=CONFIG.PARALLEL_NUM)
                 .map(self.parse, num_parallel_calls=CONFIG.PARALLEL_NUM)
                 .map(self.augumentation, num_parallel_calls=CONFIG.PARALLEL_NUM)
-                .apply(tf.data.Dataset.shuffle(buffer_size=self.data_length))
-                .apply(tf.data.Dataset.repeat())
+                .apply(tf.data.experimental.shuffle_and_repeat(buffer_size=self.data_length))
                 .batch(self.batch_size).prefetch(CONFIG.BATCH_SIZE)
             )
         else:
