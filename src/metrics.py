@@ -53,9 +53,9 @@ def sparse_mean_average_precision(y_true, y_pred):
     y_true, y_pred = _convert(y_true=y_true, y_pred=y_pred)
 
     tp = K.sum(y_true * y_pred, axis=(1, 2))
-    fp = K.sum(K.cast(K.equal(y_pred - y_true, 1.), K.floatx()), axis=(1, 2))
+    tp_fp = K.sum(y_pred, axis=(1, 2))
 
-    precisions = tp / (tp + fp + K.epsilon())
+    precisions = tp / (tp_fp + K.epsilon())
     average_precisions = K.mean(precisions, axis=0)
     return K.mean(average_precisions)
 
@@ -64,9 +64,9 @@ def sparse_mean_average_recall(y_true, y_pred):
     y_true, y_pred = _convert(y_true=y_true, y_pred=y_pred)
 
     tp = K.sum(y_true * y_pred, axis=(1, 2))
-    fn = K.sum(K.cast(K.equal(y_pred - y_true, -1.), K.floatx()), axis=(1, 2))
+    tp_fn = K.sum(y_true, axis=(1, 2))
 
-    recalls = tp / (tp + fn + K.epsilon())
+    recalls = tp / (tp_fn + K.epsilon())
     average_recalls = K.mean(recalls, axis=0)
     return K.mean(average_recalls)
 
@@ -74,10 +74,10 @@ def sparse_mean_average_recall(y_true, y_pred):
 def sparse_f1_score(y_true, y_pred):
     y_true, y_pred = _convert(y_true=y_true, y_pred=y_pred)
     tp = K.sum(y_true * y_pred, axis=(1, 2))
-    fp = K.sum(K.cast(K.equal(y_pred - y_true, 1.), K.floatx()), axis=(1, 2))
-    fn = K.sum(K.cast(K.equal(y_pred - y_true, -1.), K.floatx()), axis=(1, 2))
+    tp_fp = K.sum(y_pred, axis=(1, 2))
+    tp_fn = K.sum(y_true, axis=(1, 2))
 
-    precision = K.mean(K.mean(tp / (tp + fp + K.epsilon()), axis=0))
-    recall = K.mean(K.mean(tp / (tp + fn + K.epsilon()), axis=0))
+    precision = K.mean(K.mean(tp / (tp_fp + K.epsilon()), axis=0))
+    recall = K.mean(K.mean(tp / (tp_fn + K.epsilon()), axis=0))
 
     return 2 * precision * recall / (precision + recall)
