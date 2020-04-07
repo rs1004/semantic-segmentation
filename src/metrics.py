@@ -9,13 +9,14 @@ CONFIG = Config()
 
 def get_metrics():
     metrics = []
-    for i in range(CONFIG.CLASS_NUM):
-        f = partial(sparse_class_average_iou, class_id=i)
-        f.__name__ = f'average_iou_class_{i}'
-        metrics.append(f)
+    # for i in range(CONFIG.CLASS_NUM):
+    #     f = partial(sparse_class_average_iou, class_id=i)
+    #     f.__name__ = f'average_iou_class_{i}'
+    #     metrics.append(f)
     metrics.append(sparse_mean_iou)
+    metrics.append(sparse_f1_score)
     metrics.append(sparse_categorical_accuracy)
-    
+
     return metrics
 
 
@@ -46,3 +47,37 @@ def sparse_mean_iou(y_true, y_pred):
     average_ious = K.mean(ious, axis=0)
 
     return K.mean(average_ious)
+
+
+def sparse_mean_average_precision(y_true, y_pred):
+    y_true, y_pred = _convert(y_true=y_true, y_pred=y_pred)
+
+    tp = K.sum(y_true * y_pred, axis=(1, 2))
+    fp = K.sum(K.cast(K.equal(y_pred - y_true, 1.), K.floatx()), axis=(1, 2))
+
+    precisions = tp / (tp + fp + K.epsilon())
+    average_precisions = K.mean(precisions, axis=0)
+    return K.mean(average_precisions)
+
+
+def sparse_mean_average_recall(y_true, y_pred):
+    y_true, y_pred = _convert(y_true=y_true, y_pred=y_pred)
+
+    tp = K.sum(y_true * y_pred, axis=(1, 2))
+    fn = K.sum(K.cast(K.equal(y_pred - y_true, -1.), K.floatx()), axis=(1, 2))
+
+    recalls = tp / (tp + fn + K.epsilon())
+    average_recalls = K.mean(recalls, axis=0)
+    return K.mean(average_recalls)
+
+
+def sparse_f1_score(y_true, y_pred):
+    y_true, y_pred = _convert(y_true=y_true, y_pred=y_pred)
+    tp = K.sum(y_true * y_pred, axis=(1, 2))
+    fp = K.sum(K.cast(K.equal(y_pred - y_true, 1.), K.floatx()), axis=(1, 2))
+    fn = K.sum(K.cast(K.equal(y_pred - y_true, -1.), K.floatx()), axis=(1, 2))
+
+    precision = K.mean(K.mean(tp / (tp + fp + K.epsilon()), axis=0))
+    recall = K.mean(K.mean(tp / (tp + fn + K.epsilon()), axis=0))
+
+    return 2 * precision * recall / (precision + recall)
