@@ -31,8 +31,8 @@ class UNet:
         )
 
     def evaluate(self, ds, steps):
-        loss, acc = self.model.evaluate(ds, verbose=2, steps=steps)
-        print(loss, acc)
+        return self.model.evaluate(ds, verbose=0, steps=steps)
+        
 
     def initialize_model(self, resume):
         self.create_model()
