@@ -10,19 +10,26 @@ CONFIG = Config()
 def get_metrics():
     metrics = []
     class_fs = {
-        'average_iou': sparse_class_average_iou,
-        'average_precision': sparse_class_average_precision,
-        'average_recall': sparse_class_average_recall,
-        'average_f1_score': sparse_class_f1_score
+        'iou': sparse_class_average_iou,
+        'precision': sparse_class_average_precision,
+        'recall': sparse_class_average_recall,
+        'f1_score': sparse_class_f1_score
     }
     for class_f_name, class_f in class_fs.items():
         for i in range(CONFIG.CLASS_NUM):
             f = partial(class_f, class_id=i)
             f.__name__ = f'{class_f_name}_class_{i}'
             metrics.append(f)
-    metrics.append(sparse_mean_iou)
-    metrics.append(sparse_f1_score)
-    metrics.append(sparse_categorical_accuracy)
+    fs = {
+        'mean_iou': sparse_mean_iou,
+        'mean_AP': sparse_mean_average_precision,
+        'mean_AR': sparse_mean_average_recall,
+        'f1_score': sparse_f1_score,
+        'accuracy': sparse_categorical_accuracy
+    }
+    for f_name, f in fs.items():
+        f.__name__ = f_name
+        metrics.append(f)
 
     return metrics
 
