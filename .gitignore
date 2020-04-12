@@ -6,6 +6,10 @@ data
 raw_data
 result
 
+# virtual enviromnent
+DEV
+
 # others
 practice_code
 ref
+.vscode

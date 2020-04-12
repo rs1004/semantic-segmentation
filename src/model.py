@@ -25,14 +25,14 @@ class UNet:
         self.model.fit(
             ds,
             initial_epoch=self.model_latest_epoch,
-            epochs=self.model_latest_epoch + epochs,
+            epochs=epochs,
             steps_per_epoch=steps,
             callbacks=self.callbacks
         )
 
     def evaluate(self, ds, steps):
-        return self.model.evaluate(ds, verbose=0, steps=steps)
-        
+        scores = self.model.evaluate(ds, verbose=2, steps=steps)
+        return dict(zip(self.model.metrics_names, scores))
 
     def initialize_model(self, resume):
         self.create_model()
@@ -40,15 +40,14 @@ class UNet:
             latest = tf.train.latest_checkpoint(CONFIG.RESULT_DIR)
             self.model.load_weights(latest)
             self.model_latest_epoch = int(re.findall(r'\d{4}', latest)[0])
-            self.callbacks = [tf.keras.callbacks.ModelCheckpoint(
-                (CONFIG.RESULT_DIR / 'model-{epoch:04d}.ckpt').as_posix(),
-                save_weights_only=True,
-                verbose=1,
-                save_freq=CONFIG.SAVE_PERIODS
-            )]
         else:
             self.model_latest_epoch = 0
-            self.callbacks = None
+        self.callbacks = [tf.keras.callbacks.ModelCheckpoint(
+            (CONFIG.RESULT_DIR / 'model-{epoch:04d}.ckpt').as_posix(),
+            save_weights_only=True,
+            verbose=1,
+            period=CONFIG.SAVE_PERIODS
+        )]
 
     def create_model(self):
         inputs = Input(shape=(self.input_shape))
@@ -92,7 +91,7 @@ class UNet:
         model = Model(inputs=inputs, outputs=logits)
 
         model.compile(
-            optimizer=tf.keras.optimizers.Adam(),
+            optimizer='Adam',
             loss=sparse_categorical_crossentropy,
             metrics=get_metrics()
         )
