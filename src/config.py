@@ -23,3 +23,4 @@ class Config:
         self.LABEL_DIR = self.DATA_DIR / 'label'
         self.TFRECORD_DIR = self.DATA_DIR / 'tfrecord'
         self.RESULT_DIR = self.ROOT_DIR / 'result'
+        self.EVAL_DIR = self.ROOT_DIR / 'eval'
