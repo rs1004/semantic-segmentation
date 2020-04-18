@@ -53,7 +53,7 @@ def _int64_feature(value):
 
 
 if __name__ == '__main__':
-    for t in ['train', 'val']:
+    for t in ['train', 'test', 'val']:
         image_path_list, label_path_list = get_path_list(data_type=t)
 
         assert len(image_path_list) == len(label_path_list), f'list length is mismatch: image => {len(image_path_list)}, label => {len(label_path_list)}'

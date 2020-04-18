@@ -40,7 +40,7 @@ if __name__ == '__main__':
     # initialize
     set_label_map()
 
-    for t in ['train', 'val']:
+    for t in ['train', 'test', 'val']:
         # preprocess: image => downsize
         src_path_list = sorted((CONFIG.DATA_DIR / 'leftImg8bit' / t).glob('*/*'))
         dst_path_list = (CONFIG.IMAGE_DIR / t / f'{i:05}.png' for i in range(len(src_path_list)))

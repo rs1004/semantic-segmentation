@@ -84,6 +84,7 @@ unzip -d {本リポジトリの絶対パス}/data leftImg8bit_trainvaltest.zip
 3. データ生成・Augumentation
 4. 学習
 5. 評価
+6. 推論
 
 #### 1. 前処理
 
@@ -134,3 +135,13 @@ docker run --gpus all -it --rm --name gpu_env -v /work/semantic-segmentation/:/w
 python src/eval.py
 ```
 
+#### 6. 推論
+
+`src/inference.py` で実施。
+EC2の `p2.xlarge` インスタンスで実行する想定（またはGoogle Colab）。
+
+``` shell
+docker build -t gpu_env --rm=true docker/gpu_env/
+docker run --gpus all -it --rm --name gpu_env -v /work/semantic-segmentation/:/work gpu_env
+python src/inference.py {出力画像数} {train/test/val}
+```
