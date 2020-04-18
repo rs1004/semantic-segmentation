@@ -45,8 +45,8 @@ class UNet:
         self.callbacks = [tf.keras.callbacks.ModelCheckpoint(
             (CONFIG.RESULT_DIR / 'model-{epoch:04d}.ckpt').as_posix(),
             save_weights_only=True,
-            verbose=1,
-            period=CONFIG.SAVE_PERIODS
+            save_best_only=True,
+            verbose=1
         )]
 
     def create_model(self):

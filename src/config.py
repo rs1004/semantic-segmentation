@@ -14,7 +14,6 @@ class Config:
         self.TFRECORD_FILE_NUM = 2
         self.BATCH_SIZE = 16
         self.EPOCHS = 100
-        self.SAVE_PERIODS = 5
 
         # path
         self.ROOT_DIR = Path(__file__).parent.parent
