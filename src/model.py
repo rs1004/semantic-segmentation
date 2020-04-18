@@ -42,12 +42,22 @@ class UNet:
             self.model_latest_epoch = int(re.findall(r'\d{4}', latest)[0])
         else:
             self.model_latest_epoch = 0
-        self.callbacks = [tf.keras.callbacks.ModelCheckpoint(
-            (CONFIG.RESULT_DIR / 'model-{epoch:04d}.ckpt').as_posix(),
-            save_weights_only=True,
-            save_best_only=True,
-            verbose=1
-        )]
+        self.callbacks = [
+            tf.keras.callbacks.ModelCheckpoint(
+                filepath=(CONFIG.RESULT_DIR / 'model-{epoch:04d}.ckpt').as_posix(),
+                monitor='loss',
+                save_weights_only=True,
+                save_best_only=True),
+            tf.keras.callbacks.EarlyStopping(
+                monitor='loss',
+                min_delta=1e-4,
+                patience=5),
+            tf.keras.callbacks.TensorBoard(
+                log_dir=CONFIG.RESULT_DIR,
+                histogram_freq=5,
+                write_graph=True,
+                write_images=True)
+            ]
 
     def create_model(self):
         inputs = Input(shape=(self.input_shape))
