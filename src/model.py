@@ -54,7 +54,7 @@ class UNet:
                 patience=5),
             tf.keras.callbacks.TensorBoard(
                 log_dir=CONFIG.RESULT_DIR,
-                histogram_freq=5,
+                histogram_freq=1,
                 write_graph=True,
                 write_images=True)
             ]
